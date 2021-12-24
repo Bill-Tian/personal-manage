@@ -50,6 +50,14 @@ export default {
   },
   methods: {
     handleClose(tag) {
+      axios.get(`/api/blogtag/deleteBlogTagById/${tag.id}`).then((res) => {
+        if (res.data.results) {
+          ElMessage({
+            message: "删除成功",
+            type: "success",
+          });
+        }
+      });
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
     },
 

@@ -119,26 +119,71 @@
     </el-dialog>
 
     <!--new-->
-    <el-table :data="tableData2" border style="width: 100%">
-      <el-table-column
-        prop="create_date"
-        label="创建时间"
-        width="180"
-        align="center"
-      />
-      <el-table-column prop="title" label="标题" width="180" align="center" />
-      <el-table-column prop="heat" label="热度" align="center" />
-      <el-table-column label="图片" align="center">
-        <template #default="scope">
-          <el-image
-            class="table-td-thumb"
-            :src="scope.row.img_url"
-            :preview-src-list="[scope.row.img_url]"
-          >
-          </el-image>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="container">
+      <el-table :data="tableData2" border style="width: 100%" ref="blogTable">
+        <el-table-column
+          label="序号"
+          type="index"
+          width="55"
+          align="center"
+        ></el-table-column>
+
+        <el-table-column prop="title" label="标题" width="200" align="center" />
+        <el-table-column prop="heat" label="热度" width="150" align="center" />
+        <el-table-column prop="heat" label="标签" width="150" align="center" />
+        <el-table-column label="图片" align="center">
+          <template #default="scope">
+            <el-image
+              class="table-td-thumb"
+              :src="scope.row.img_url"
+              :preview-src-list="[scope.row.img_url]"
+            >
+            </el-image>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="create_date"
+          label="创建时间"
+          width="180"
+          align="center"
+        />
+        <el-table-column label="操作" width="180" align="center">
+          <template #default="scope">
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click="openEdit(scope.$index, scope.row)"
+              >编辑
+            </el-button>
+            <el-button
+              type="text"
+              icon="el-icon-delete"
+              class="red"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+        <div class="block">
+          <el-pagination layout="prev, pager, next" :total="50"></el-pagination>
+        </div>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="total, prev, pager, next"
+          :page-size="5"
+          :total="dataCount"
+          @current-change="pageChange"
+        ></el-pagination>
+      </div>
+    </div>
+
+    <edit-blog
+      v-if="params.isShowEdit"
+      :datas="params"
+      @my-emit="parentEmit"
+    ></edit-blog>
 
     <!-- <mavon-editor
       class="md"
@@ -159,8 +204,10 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { fetchData } from "../api/index";
 import axios from "axios";
 import moment from "moment";
+import EditBlog from "./blogs/EditBlog.vue";
 
 export default {
+  components: { EditBlog },
   name: "basetable",
   setup() {
     const query = reactive({
@@ -171,6 +218,7 @@ export default {
     });
     const tableData = ref([]);
     const pageTotal = ref(0);
+    console.log(pageTotal);
     // 获取表格数据
     const getData = () => {
       fetchData(query).then((res) => {
@@ -226,22 +274,48 @@ export default {
       });
     };
 
+    const params = reactive({
+      isShowEdit: false,
+      detailData: {},
+    });
+
+    // const isShowEdit = ref(false);
+
+    const openEdit = (index, row) => {
+      params.isShowEdit = true;
+      params.detailData = row;
+
+      // isShowEdit.value = true;
+    };
+
+    // provide("mmm", params);
+
+    const parentEmit = () => {
+      params.isShowEdit = false;
+    };
+
     return {
       query,
       tableData,
       pageTotal,
       editVisible,
-      form,
+      params,
+      // isShowEdit,
+      // form,
       handleSearch,
       handlePageChange,
       handleDelete,
       handleEdit,
       saveEdit,
+      openEdit,
+      parentEmit,
     };
   },
   data() {
     return {
-      // tableData2: [],
+      dialogFormVisible: false,
+      pageNum: 0,
+      dataCount: 0,
       tableData2: [
         {
           create_date: "2021-12-16T16:00:00.000Z",
@@ -253,19 +327,63 @@ export default {
           content: 12312,
         },
       ],
+
+      tagsList: [],
+      form: {
+        create_date: "",
+        title: "",
+        thumb_up: "",
+        heat: "",
+        img_url: "",
+        content: "",
+        tags: [],
+      },
     };
   },
   mounted() {
-    axios.get("/api/blog/findBlog").then((response) => {
-      // (this.info = response)
-      console.log(response);
-      this.tableData2 = response.data.results;
-      console.log(this.tableData2);
-    });
-    this.tableData2.forEach((item) => {
-      item.create_date = moment(item.create_date).format("YYYY-MM-DD");
-    });
-    console.log(this.tableData2);
+    // this.tableData2.forEach((item) => {
+    //   item.create_date = moment(item.create_date).format("YYYY-MM-DD");
+    // });
+    this.getListOfData();
+    this.getTagList();
+  },
+  methods: {
+    pageChange(val) {
+      this.pageNum = val - 1;
+      this.getListOfData();
+    },
+
+    // 获取blog表格数据
+    getListOfData() {
+      const param = {
+        page: this.pageNum,
+        pageSize: 5,
+      };
+      axios.post("/api/blog/findBlogBypage", param).then((res) => {
+        this.tableData2 = res.data.results;
+        this.dataCount = res.data.count;
+        this.tableData2.forEach((item) => {
+          item.create_date = moment(item.create_date).format("YYYY-MM-DD");
+        });
+      });
+    },
+
+    openBlogEdit(index, row) {
+      console.log(index);
+      console.log(row);
+      this.dialogFormVisible = true;
+      this.form = row;
+    },
+
+    // 获取标签
+    getTagList() {
+      axios.get("/api/blogtag/findBlogTag").then((res) => {
+        if (res.data.results) {
+          this.tagsList = res.data.results;
+          console.log(this.tagsList);
+        }
+      });
+    },
   },
 };
 </script>
