@@ -1,7 +1,7 @@
 <!--
  * @Author: Mr.Tian
  * @Date: 2021-12-15 11:22:00
- * @LastEditTime: 2021-12-23 11:52:56
+ * @LastEditTime: 2022-01-04 16:43:58
  * @LastEditors: Mr.Tian
  * @Description: 
 -->
@@ -18,45 +18,33 @@
 
     <div class="container">
       <div class="form-boxs">
-        <el-form
-          :model="ruleForm"
-          ref="ruleForm"
-          :rules="rules"
-          label-width="120px"
-        >
-          <el-form-item label="标题" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+        <el-form :model="ruleForm" ref="dom" :rules="rules" label-width="120px">
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="ruleForm.title"></el-input>
           </el-form-item>
-          <el-form-item label="发表日期" prop="date1">
-            <el-col :span="11">
-              <el-date-picker
-                v-model="ruleForm.date1"
-                type="date"
-                placeholder="Pick a date"
-                style="width: 100%"
-              ></el-date-picker>
-            </el-col>
+          <el-form-item label="描述" prop="description">
+            <el-input v-model="ruleForm.description"></el-input>
           </el-form-item>
-          <el-form-item label="图片地址" prop="imgurl">
+          <el-form-item label="图片地址" prop="imgName">
             <el-input
-              v-model="ruleForm.imgurl"
-              placeholder="https://cdn.jsdelivr.net/gh/Bill-Tian/Picture-library/img/Avatar/"
+              v-model="ruleForm.imgName"
+              placeholder="图片名称"
             ></el-input>
           </el-form-item>
-          <el-form-item label="标签" prop="tags">
-            <el-checkbox-group v-model="ruleForm.tags">
+          <el-form-item label="标签" prop="tagList">
+            <el-checkbox-group v-model="ruleForm.tagList">
               <el-checkbox
                 v-for="item in tagsList"
-                :key="item.id"
-                :label="item.id"
-                >{{ item.blog_tag_name }}</el-checkbox
+                :key="item._id"
+                :label="item.tagName"
+                >{{ item.tagName }}</el-checkbox
               >
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="内容" class="content" prop="content">
+          <el-form-item label="内容" class="content" prop="body">
             <mavon-editor
               :codeStyle="codeStyle"
-              v-model="ruleForm.content"
+              v-model="ruleForm.body"
               :ishljs="true"
             />
           </el-form-item>
@@ -70,119 +58,116 @@
 </template>
 
 <script>
-import axios from "axios";
+import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
+import { createArticle, getTags } from "../api/index";
 export default {
-  name: "markdown",
-  data() {
-    return {
-      handbook: "",
-      codeStyle: "monokai-sublime", //主题
-      tagsList: [],
-      ruleForm: {
-        name: "",
-        imgurl: "",
-        date1: "",
-        tags: [],
-        content: "",
-      },
+  setup() {
+    const codeStyle = ref("monokai-sublime");
+    const tagsList = ref([]);
 
-      rules: {
-        name: [
-          {
-            required: true,
-            message: "请输入博客标题",
-            trigger: "blur",
-          },
-          {
-            min: 1,
-            max: 30,
-            message: "博客标题长度最大为30",
-            trigger: "blur",
-          },
-        ],
-        imgurl: [
-          {
-            required: true,
-            message: "请输入图片地址",
-            trigger: "blur",
-          },
-        ],
-        tags: [
-          {
-            type: "array",
-            required: true,
-            message: "请选择标签",
-            trigger: "change",
-          },
-        ],
-        date1: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择日期",
-            trigger: "change",
-          },
-        ],
-        content: [
-          {
-            required: true,
-            message: "请输入文档内容",
-            trigger: "blur",
-          },
-        ],
-      },
+    const ruleForm = reactive({
+      title: "",
+      imgName: "",
+      description: "",
+      tagList: [],
+      body: "",
+    });
+    const rules = {
+      title: [
+        {
+          required: true,
+          message: "请输入博客标题",
+          trigger: "blur",
+        },
+        {
+          min: 1,
+          max: 30,
+          message: "博客标题长度最大为30",
+          trigger: "blur",
+        },
+      ],
+      imgName: [
+        {
+          required: true,
+          message: "请输入图片名称",
+          trigger: "blur",
+        },
+      ],
+      description: [
+        {
+          required: true,
+          message: "描述不能为空",
+          trigger: "blur",
+        },
+      ],
+      tagList: [
+        {
+          type: "array",
+          required: true,
+          message: "Please select at least one activity type",
+          trigger: "change",
+        },
+      ],
+      body: [
+        {
+          required: true,
+          message: "请输入文档内容",
+          trigger: "blur",
+        },
+      ],
     };
-  },
-  mounted() {
-    this.getTagList();
-  },
-  methods: {
-    // 获取标签
-    getTagList() {
-      axios.get("/api/blogtag/findBlogTag").then((res) => {
-        if (res.data.results) {
-          this.tagsList = res.data.results;
-        }
-      });
-    },
 
-    onSubmit() {
-      this.$refs["ruleForm"].validate((valid) => {
+    // 表单元素
+    const dom = ref(null);
+
+    // 提交按钮
+    const onSubmit = () => {
+      dom.value.validate((valid) => {
         if (valid) {
-          this.addBlog();
+          addBlog();
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
-    },
+    };
 
-    // 新增博客的方法
-    addBlog() {
-      const param = {
-        create_date: this.ruleForm.date1,
-        title: this.ruleForm.name,
-        thumb_up: "0",
-        heat: "0",
-        img_url: this.ruleForm.imgurl,
-        content: this.ruleForm.content,
-        blogtag_id: this.ruleForm.tags,
-      };
-      axios.post("/api/blog/addBlog", param).then((res) => {
-        if (res.data.results.affectedRows == 1) {
+    // 新增博客方法
+    const addBlog = () => {
+      createArticle({ article: ruleForm }).then((res) => {
+        if (res) {
           ElMessage({
             message: "新增成功",
             type: "success",
           });
         } else {
           ElMessage({
-            message: res.data.results.text,
+            message: res,
             type: "error",
           });
         }
       });
-    },
+    };
+
+    // 获取标签
+    const getTagList = () => {
+      getTags().then((res) => {
+        if (res) {
+          tagsList.value = res.tags;
+        }
+      });
+    };
+    getTagList();
+
+    return {
+      ruleForm,
+      rules,
+      dom,
+      codeStyle,
+      tagsList,
+      onSubmit,
+      addBlog,
+    };
   },
 };
 </script>

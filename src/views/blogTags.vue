@@ -10,16 +10,16 @@
     <div class="container">
       <el-tag
         v-for="tag in dynamicTags"
-        :key="tag.id"
+        :key="tag._id"
         closable
         @close="handleClose(tag)"
       >
-        {{ tag.blog_tag_name }}
+        {{ tag.tagName }}
       </el-tag>
       <el-input
         v-if="inputVisible"
         ref="saveTagInput"
-        v-model="inputValue"
+        v-model="inputValue.tagName"
         class="input-new-tag"
         size="mini"
         @keyup.enter="handleInputConfirm"
@@ -34,72 +34,88 @@
 </template>
 
 <script>
-import axios from "axios";
 import { ElMessage } from "element-plus";
+import { getTags, createTags, deleteTags } from "../api/index";
+import { reactive, ref, nextTick } from "vue";
 export default {
   name: "blogTags",
-  data() {
-    return {
-      dynamicTags: [],
-      inputVisible: false,
-      inputValue: "",
-    };
-  },
-  mounted() {
-    this.getTagList();
-  },
-  methods: {
-    handleClose(tag) {
-      axios.get(`/api/blogtag/deleteBlogTagById/${tag.id}`).then((res) => {
-        if (res.data.results) {
-          ElMessage({
-            message: "删除成功",
-            type: "success",
-          });
-        }
-      });
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-    },
 
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(() => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
+  setup() {
+    // 标签数组
+    const dynamicTags = ref([]);
 
-    handleInputConfirm() {
-      const inputValue = this.inputValue;
-      if (inputValue) {
-        // this.dynamicTags.push(inputValue);
-        this.addTags();
-      }
-      this.inputVisible = false;
-      this.inputValue = "";
-    },
+    // 输入框
+    const inputVisible = ref(false);
+
+    const saveTagInput = ref(null);
+
+    const inputValue = reactive({
+      tagName: null,
+    });
 
     // 获取标签
-    getTagList() {
-      axios.get("/api/blogtag/findBlogTag").then((res) => {
-        if (res.data.results) {
-          this.dynamicTags = res.data.results;
+    const getTagList = () => {
+      getTags().then((res) => {
+        if (res) {
+          dynamicTags.value = res.tags;
         }
       });
-    },
+    };
+    getTagList();
+
+    // 新增确认
+    const handleInputConfirm = () => {
+      if (inputValue.tagName) {
+        addTags();
+      }
+      inputVisible.value = false;
+      inputValue.tagName = "";
+    };
 
     // 新增标签
-    addTags() {
-      const param = { blog_tag_name: this.inputValue };
-      axios.post("/api/blogtag/addBlogTag", param).then((res) => {
-        if (res.data.results.affectedRows == 1) {
+    const addTags = () => {
+      createTags({ tags: inputValue }).then((res) => {
+        if (res.tags) {
           ElMessage({
             message: "新增成功",
             type: "success",
           });
-          this.getTagList();
+          getTagList();
         }
       });
-    },
+    };
+
+    // 删除标签
+    const handleClose = (tag) => {
+      deleteTags(tag._id).then((res) => {
+        if (res.tags) {
+          ElMessage({
+            message: "删除成功",
+            type: "success",
+          });
+          getTagList();
+        }
+      });
+    };
+
+    const showInput = () => {
+      inputVisible.value = true;
+      nextTick(() => {
+        saveTagInput.value.input.focus();
+      });
+    };
+
+    return {
+      inputValue,
+      inputVisible,
+      dynamicTags,
+      saveTagInput,
+      getTagList,
+      addTags,
+      handleInputConfirm,
+      handleClose,
+      showInput,
+    };
   },
 };
 </script>

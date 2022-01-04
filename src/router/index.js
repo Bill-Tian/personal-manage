@@ -1,11 +1,11 @@
 /*
  * @Author: Mr.Tian
  * @Date: 2021-12-15 11:20:23
- * @LastEditTime: 2021-12-16 09:49:28
+ * @LastEditTime: 2021-12-30 17:43:13
  * @LastEditors: Mr.Tian
  * @Description: 
  */
-import {createRouter, createWebHashHistory} from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "../views/Home.vue";
 
 const routes = [
@@ -23,42 +23,56 @@ const routes = [
                 meta: {
                     title: '系统首页'
                 },
-                component: () => import ( /* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
+                component: () => import( /* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
+            }, {
+                path: "/admin",
+                name: "Admin",
+                meta: {
+                    title: '管理员'
+                },
+                component: () => import( /* webpackChunkName: "table" */ "../views/admin/Admin.vue")
+            }, {
+                path: "/blogtable",
+                name: "blogtable",
+                meta: {
+                    title: '博客'
+                },
+                component: () => import( /* webpackChunkName: "table" */ "../views/blogs/BlogTable.vue")
             }, {
                 path: "/table",
                 name: "basetable",
                 meta: {
                     title: '表格'
                 },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/BaseTable.vue")
+                component: () => import( /* webpackChunkName: "table" */ "../views/BaseTable.vue")
             }, {
                 path: "/charts",
                 name: "basecharts",
                 meta: {
                     title: '图表'
                 },
-                component: () => import ( /* webpackChunkName: "charts" */ "../views/BaseCharts.vue")
+                component: () => import( /* webpackChunkName: "charts" */ "../views/BaseCharts.vue")
             }, {
                 path: "/form",
                 name: "baseform",
                 meta: {
                     title: '表单'
                 },
-                component: () => import ( /* webpackChunkName: "form" */ "../views/BaseForm.vue")
+                component: () => import( /* webpackChunkName: "form" */ "../views/BaseForm.vue")
             }, {
                 path: "/tabs",
                 name: "tabs",
                 meta: {
                     title: 'tab标签'
                 },
-                component: () => import ( /* webpackChunkName: "tabs" */ "../views/Tabs.vue")
+                component: () => import( /* webpackChunkName: "tabs" */ "../views/Tabs.vue")
             }, {
                 path: "/blogTags",
                 name: "blogTags",
                 meta: {
                     title: '博客标签'
                 },
-                component: () => import ( /* webpackChunkName: "blogTags" */ "../views/blogTags.vue")
+                component: () => import( /* webpackChunkName: "blogTags" */ "../views/blogTags.vue")
             }, {
                 path: "/permission",
                 name: "permission",
@@ -66,56 +80,56 @@ const routes = [
                     title: '权限管理',
                     permission: true
                 },
-                component: () => import ( /* webpackChunkName: "permission" */ "../views/Permission.vue")
+                component: () => import( /* webpackChunkName: "permission" */ "../views/Permission.vue")
             }, {
                 path: "/i18n",
                 name: "i18n",
                 meta: {
                     title: '国际化语言'
                 },
-                component: () => import ( /* webpackChunkName: "i18n" */ "../views/I18n.vue")
+                component: () => import( /* webpackChunkName: "i18n" */ "../views/I18n.vue")
             }, {
                 path: "/upload",
                 name: "upload",
                 meta: {
                     title: '上传插件'
                 },
-                component: () => import ( /* webpackChunkName: "upload" */ "../views/Upload.vue")
+                component: () => import( /* webpackChunkName: "upload" */ "../views/Upload.vue")
             }, {
                 path: "/mark",
                 name: "marktps",
                 meta: {
                     title: '文本编辑'
                 },
-                component: () => import ( /* webpackChunkName: "mark" */ "../views/MarkDown.vue")
+                component: () => import( /* webpackChunkName: "mark" */ "../views/MarkDown.vue")
             }, {
                 path: "/icon",
                 name: "icon",
                 meta: {
                     title: '自定义图标'
                 },
-                component: () => import ( /* webpackChunkName: "icon" */ "../views/Icon.vue")
+                component: () => import( /* webpackChunkName: "icon" */ "../views/Icon.vue")
             }, {
                 path: '/404',
                 name: '404',
                 meta: {
                     title: '找不到页面'
                 },
-                component: () => import (/* webpackChunkName: "404" */ '../views/404.vue')
+                component: () => import(/* webpackChunkName: "404" */ '../views/404.vue')
             }, {
                 path: '/403',
                 name: '403',
                 meta: {
                     title: '没有权限'
                 },
-                component: () => import (/* webpackChunkName: "403" */ '../views/403.vue')
+                component: () => import(/* webpackChunkName: "403" */ '../views/403.vue')
             }, {
                 path: '/user',
                 name: 'user',
                 meta: {
                     title: '个人中心'
                 },
-                component: () => import (/* webpackChunkName: "user" */ '../views/User.vue')
+                component: () => import(/* webpackChunkName: "user" */ '../views/User.vue')
             }
         ]
     }, {
@@ -124,7 +138,7 @@ const routes = [
         meta: {
             title: '登录'
         },
-        component: () => import ( /* webpackChunkName: "login" */ "../views/Login.vue")
+        component: () => import( /* webpackChunkName: "login" */ "../views/Login.vue")
     }
 ];
 

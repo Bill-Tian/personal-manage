@@ -1,3 +1,10 @@
+/*
+ * @Author: Mr.Tian
+ * @Date: 2021-12-15 11:22:00
+ * @LastEditTime: 2021-12-31 15:15:04
+ * @LastEditors: Mr.Tian
+ * @Description: 
+ */
 import axios from 'axios';
 
 const service = axios.create({
@@ -9,6 +16,9 @@ const service = axios.create({
 
 service.interceptors.request.use(
     config => {
+        if (localStorage.getItem('token')) {
+            config.headers.authorization = 'Bearer ' + localStorage.getItem('token');
+        }
         return config;
     },
     error => {
@@ -19,7 +29,7 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     response => {
-        if (response.status === 200) {
+        if (200 <= response.status < 300) {
             return response.data;
         } else {
             Promise.reject();
@@ -27,7 +37,11 @@ service.interceptors.response.use(
     },
     error => {
         console.log(error);
-        return Promise.reject();
+        if (401 <= error.response.status <= 403) {
+            return error.response.data;
+        } else {
+            return Promise.reject();
+        }
     }
 );
 

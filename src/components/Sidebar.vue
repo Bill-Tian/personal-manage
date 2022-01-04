@@ -63,6 +63,16 @@ export default {
       },
       {
         icon: "el-icon-lx-cascades",
+        index: "/admin",
+        title: "管理员设置",
+      },
+      {
+        icon: "el-icon-lx-cascades",
+        index: "/blogtable",
+        title: "博客列表",
+      },
+      {
+        icon: "el-icon-lx-cascades",
         index: "/table",
         title: "基础表格",
       },
