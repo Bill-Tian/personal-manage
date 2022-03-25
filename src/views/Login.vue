@@ -43,12 +43,13 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import axios from "axios";
+// import CryptoJs from "crypto-js"; //引用AES源码js
 
 export default {
   setup() {
     const router = useRouter();
     const param = reactive({
-      username: "liupengjiang7",
+      username: "niexin",
       password: "lpj32",
     });
 
@@ -72,6 +73,7 @@ export default {
           let params = {
             user: param,
           };
+          // testEncryp();
           axios
             .post("/api/users/login", params)
             .then((res) => {
@@ -97,6 +99,40 @@ export default {
       });
     };
 
+    // const key = CryptoJs.enc.Utf8.parse("88889999personal"); // 十六位十六进制数作为密钥
+    // const iv = CryptoJs.enc.Utf8.parse("personal88889999"); // 十六位十六进制数作为密钥偏移量
+
+    // //加密
+    // const testEncryp = () => {
+    //   var res = encrypt(param.password);
+    //   param.password = res;
+    //   var pas = decrypt(res);
+    //   console.log(pas);
+    // };
+
+    // const encrypt = (word) => {
+    //   let srcs = CryptoJs.enc.Utf8.parse(word);
+    //   let encrypted = CryptoJs.AES.encrypt(srcs, key, {
+    //     iv: iv,
+    //     mode: CryptoJs.mode.CBC,
+    //     padding: CryptoJs.pad.Pkcs7,
+    //   });
+    //   return encrypted.ciphertext.toString().toUpperCase();
+    // };
+
+    // // 解密
+    // const decrypt = (word) => {
+    //   let encryptedHexStr = CryptoJs.enc.Hex.parse(word);
+    //   let srcs = CryptoJs.enc.Base64.stringify(encryptedHexStr);
+    //   let decrypt = CryptoJs.AES.decrypt(srcs, key, {
+    //     iv: iv,
+    //     mode: CryptoJs.mode.CBC,
+    //     padding: CryptoJs.pad.Pkcs7,
+    //   });
+    //   let decryptedStr = decrypt.toString(CryptoJs.enc.Utf8);
+    //   return decryptedStr.toString();
+    // };
+
     const store = useStore();
     store.commit("clearTags");
 
@@ -115,7 +151,8 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  background-image: url(../assets/img/login-bg.jpg);
+  /* background-image: url(../assets/img/login-bg.jpg); */
+  background-image: url(../assets/img/san.jpg);
   background-size: 100%;
 }
 .ms-title {

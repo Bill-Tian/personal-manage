@@ -1,7 +1,7 @@
 <!--
  * @Author: Mr.Tian
  * @Date: 2021-12-30 17:40:14
- * @LastEditTime: 2022-01-04 16:58:57
+ * @LastEditTime: 2022-01-19 14:10:36
  * @LastEditors: Mr.Tian
  * @Description: 
 -->
@@ -58,7 +58,7 @@
           width="150"
           align="center"
         />
-        <el-table-column prop="body" label="内容" width="150" align="center" />
+        <!-- <el-table-column prop="body" label="内容" width="150" align="center" /> -->
         <el-table-column prop="author.username" label="作者" align="center" />
         <el-table-column
           prop="createdAt"

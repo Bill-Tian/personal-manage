@@ -1,7 +1,7 @@
 /*
  * @Author: Mr.Tian
  * @Date: 2021-12-15 11:22:00
- * @LastEditTime: 2022-01-04 11:10:11
+ * @LastEditTime: 2022-01-28 15:17:58
  * @LastEditors: Mr.Tian
  * @Description: 
  */
@@ -89,5 +89,40 @@ export const deleteTags = (id) => {
     return request({
         url: `/api/label/${id}`,
         method: 'delete',
+    })
+}
+
+
+// 搜索音乐
+export const searchMusic = (query) => {
+    return request({
+        url: `/api/music/search?keywords=${query}`,
+        method: 'get',
+    })
+}
+
+
+// 添加音乐
+export const addMusic = (query) => {
+    return request({
+        url: `/api/music/addMusic`,
+        method: 'post',
+        data: query
+    })
+}
+
+// 获取音乐
+export const getMusicList = () => {
+    return request({
+        url: `/api/music`,
+        method: 'get'
+    })
+}
+
+// 获取热门音乐库
+export const getHotList = (query) => {
+    return request({
+        url: `/api/music/hots?idx=${query}`,
+        method: 'get'
     })
 }

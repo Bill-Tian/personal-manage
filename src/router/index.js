@@ -1,7 +1,7 @@
 /*
  * @Author: Mr.Tian
  * @Date: 2021-12-15 11:20:23
- * @LastEditTime: 2021-12-30 17:43:13
+ * @LastEditTime: 2022-01-27 10:54:10
  * @LastEditors: Mr.Tian
  * @Description: 
  */
@@ -73,6 +73,13 @@ const routes = [
                     title: '博客标签'
                 },
                 component: () => import( /* webpackChunkName: "blogTags" */ "../views/blogTags.vue")
+            }, {
+                path: "/musicList",
+                name: "musicList",
+                meta: {
+                    title: '音乐管理'
+                },
+                component: () => import( /* webpackChunkName: "musicList" */ "../views/music/MusicList.vue")
             }, {
                 path: "/permission",
                 name: "permission",

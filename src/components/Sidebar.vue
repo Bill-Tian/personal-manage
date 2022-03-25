@@ -135,6 +135,11 @@ export default {
         index: "/blogTags",
         title: "标签设置",
       },
+      {
+        icon: "el-icon-present",
+        index: "/musicList",
+        title: "音乐管理",
+      },
     ];
 
     const route = useRoute();

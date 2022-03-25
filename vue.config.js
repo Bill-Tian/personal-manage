@@ -1,7 +1,7 @@
 /*
  * @Author: Mr.Tian
  * @Date: 2021-12-15 14:51:30
- * @LastEditTime: 2021-12-29 11:59:01
+ * @LastEditTime: 2022-01-11 15:04:37
  * @LastEditors: Mr.Tian
  * @Description: 
  */
@@ -44,7 +44,7 @@ module.exports = {
     // 它支持webPack-dev-server的所有选项
     devServer: {
         host: "0.0.0.0",
-        port: 8080, // 端口号
+        port: 3300, // 端口号
         https: false, // https:{type:Boolean}
         open: true, //配置自动启动浏览器
         // proxy: 'http://localhost:4000' // 配置跨域处理,只有一个代理
